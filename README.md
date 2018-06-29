@@ -1,8 +1,9 @@
-OpenMM Drude Dual Nose-Hoover Integrator Plugin
+OpenMM Constant Potential MD Integrator Plugin
 =====================
 
-This plugin enables applying duan Nose-Hoover thermostat to a extended Lagrangian-scheme
-MD simulate with drude-polarizable force field.
+This plugin enables applying constant potential MD algorithm through exact image charge solution.
+The current algorithm is limited for slab geometry (two parallel conducting electrodes).
+ConstVLangevinIntegrator is available, and only CUDA implementation is tested.
 
 Building The Plugin
 ===================
@@ -115,17 +116,29 @@ install the module.  Once you do that, you can use the plugin from your Python s
     from simtk.openmm.app import *
     from simtk.openmm import *
     from simtk.unit import *
-    from drudenoseplugin import DrudeNoseHooverIntegrator
-    integ = DrudeNoseHooverIntegrator(temperature, REALFREQ*picosecond, 1*kelvin, DRUDEFREQ*picosecond, 0.001*picoseconds, 20, CHAINFREQ)
+    from constvplugin import ConstVLangevinIntegrator
+    integ = ConstVLangevinIntegrator(temperature, freq, timestep)
 
-If you wish to use independent temperature group for central atoms in plannar geometry (plannar improper),
-you may add the following lines to your python script to add the central atoms to the integrator.
+After creating system of real particles, set your box-z dimension to be exactly twice of the box-z of real system.
+Then you need to add image charge particles to the system and the NonbondedForce.
+Current implementation generates dummy particles for neutral atoms as well, which would not harm the performance.
 
-    improperForce = ''force object that contains only your desired improper torsions''
-        ((  improperForce = [f for f in [system.getForce(i) for i in range(system.getNumForces())] if type(f) == PeriodicTorsionForce][0]  ))
-    for i in range(improperForce.getNumTorsions()):
-        YOUR_INTEGRATOR.addCenterParticle(improperForce.getTorsionParameters(i)[2])
+    newChain = newTopology.addChain()
+    newResidue = newTopology.addResidue('IM', newChain)
+    imsig = 1*nanometer
+    imeps = 0*kilojoule/mole
+    nRealAtoms = system.getNumParticles()
+    nbforce = [f for f in [system.getForce(i) for i in range(system.getNumForces())] if type(f) == NonbondedForce][0]
 
+    ## add all particles regardless of the charge, but add nbforce only for the charged particles
+    for i in range(nRealAtoms):
+        (q, sig, eps) = nbforce.getParticleParameters(i)
+        newAtom = newTopology.addAtom('IM', None, newResidue)
+        pos = positions[i].value_in_unit(nanometer)
+        positions.append((pos[0],pos[1],-pos[2])*nanometer)
+        idxat = system.addParticle(0*dalton)
+        if (q != -q):
+            idxat2 = nbforce.addParticle(-q,imsig,imeps)
 
 
 License
