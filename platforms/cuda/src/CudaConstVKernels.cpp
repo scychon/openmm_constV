@@ -53,6 +53,8 @@ CudaIntegrateConstVLangevinStepKernel::~CudaIntegrateConstVLangevinStepKernel() 
     cu.setAsCurrent();
     if (params != NULL)
         delete params;
+    if (invAtomOrder != NULL)
+        delete invAtomOrder;
 }
 
 void CudaIntegrateConstVLangevinStepKernel::initialize(const System& system, const ConstVLangevinIntegrator& integrator) {
@@ -64,8 +66,10 @@ void CudaIntegrateConstVLangevinStepKernel::initialize(const System& system, con
     kernel1 = cu.getKernel(module, "integrateConstVLangevinPart1");
     kernel2 = cu.getKernel(module, "integrateConstVLangevinPart2");
     kernelImage = cu.getKernel(module, "updateImageParticlePositions");
+    kernelReorder = cu.getKernel(module, "reorderInverseAtomOrderIndexes");
     params = new CudaArray(cu, 3, cu.getUseDoublePrecision() || cu.getUseMixedPrecision() ? sizeof(double) : sizeof(float), "langevinParams");
     prevStepSize = -1.0;
+
 
     // Check image particles are properly set (same number as original, mass = 0)
     int numAtoms = system.getNumParticles();
@@ -76,11 +80,12 @@ void CudaIntegrateConstVLangevinStepKernel::initialize(const System& system, con
             throw OpenMMException("Image Particle has nonzero mass");
     }
 
-    // Initialize the positions of the image particles
-    int numRealAtoms = numAtoms/2;
-    CUdeviceptr posCorrection = (cu.getUseMixedPrecision() ? cu.getPosqCorrection().getDevicePointer() : 0);
-    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &cu.getAtomIndexArray().getDevicePointer()};
-    cu.executeKernel(kernelImage, argsImage, numRealAtoms, 128);
+//    // Initialize the positions of the image particles
+//    int numRealAtoms = numAtoms/2;
+//    CUdeviceptr posCorrection = (cu.getUseMixedPrecision() ? cu.getPosqCorrection().getDevicePointer() : 0);
+//    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &cu.getAtomIndexArray().getDevicePointer()};
+//    cu.executeKernel(kernelImage, argsImage, numRealAtoms, 128);
+    invAtomOrder = CudaArray::create<int>(cu, cu.getPaddedNumAtoms(), "invAtomOrder");
 }
 
 void CudaIntegrateConstVLangevinStepKernel::execute(ContextImpl& context, const ConstVLangevinIntegrator& integrator) {
@@ -119,6 +124,11 @@ void CudaIntegrateConstVLangevinStepKernel::execute(ContextImpl& context, const 
         prevStepSize = stepSize;
     }
 
+    if (cu.getAtomsWereReordered()) {
+        void* argsReorder[] = {&numAtoms, &cu.getAtomIndexArray().getDevicePointer(), &invAtomOrder->getDevicePointer()};
+        cu.executeKernel(kernelReorder, argsReorder, numAtoms, 128);
+    }
+
     // Call the first integration kernel.
 
     int randomIndex = integration.prepareRandomNumbers(cu.getPaddedNumAtoms());
@@ -140,7 +150,7 @@ void CudaIntegrateConstVLangevinStepKernel::execute(ContextImpl& context, const 
 
     // Call the image charge position update kernel.
 
-    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &cu.getAtomIndexArray().getDevicePointer()};
+    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &invAtomOrder->getDevicePointer()};
     cu.executeKernel(kernelImage, argsImage, numRealAtoms, 128);
 
     // Update the time and step count.

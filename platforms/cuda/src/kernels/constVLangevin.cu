@@ -135,14 +135,15 @@ extern "C" __global__ void selectConstVLangevinStepSize(int numAtoms, int padded
  * Modify the position of image charges
  */
 
-extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4* __restrict__ posq, real4* __restrict__ posqCorrection, int* __restrict__ atomIndex) {
-    unsigned int index = threadIdx.x;
+extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4* __restrict__ posq, real4* __restrict__ posqCorrection, int* __restrict__ invAtomOrder) {
+//    unsigned int index = threadIdx.x;
+    int index = blockIdx.x*blockDim.x+threadIdx.x;
     while (index < numRealAtoms) {
-        real4 pos0 = posq[atomIndex[index]];
+        real4 pos0 = posq[invAtomOrder[index]];
         if (pos0.w != -pos0.w) {
 #ifdef USE_MIXED_PRECISION
             real4 pos1 = pos0;
-            real4 pos2 = posqCorrection[atomIndex[index]];
+            real4 pos2 = posqCorrection[invAtomOrder[index]];
             mixed4 pos = make_mixed4(pos1.x+(mixed)pos2.x, pos1.y+(mixed)pos2.y, pos1.z+(mixed)pos2.z, pos1.w);
 #else
             real4 pos = pos0;
@@ -150,12 +151,25 @@ extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4*
             pos.z = -pos.z;
             pos.w = -pos.w;
 #ifdef USE_MIXED_PRECISION
-            posq[atomIndex[index+numRealAtoms]] = make_real4((real) pos.x, (real) pos.y, (real) pos.z, (real) pos.w);
-            posqCorrection[atomIndex[index+numRealAtoms]] = make_real4(pos.x-(real) pos.x, pos.y-(real) pos.y, pos.z-(real) pos.z, 0);
+            posq[invAtomOrder[index+numRealAtoms]] = make_real4((real) pos.x, (real) pos.y, (real) pos.z, (real) pos.w);
+            posqCorrection[invAtomOrder[index+numRealAtoms]] = make_real4(pos.x-(real) pos.x, pos.y-(real) pos.y, pos.z-(real) pos.z, 0);
 #else
-            posq[atomIndex[index+numRealAtoms]] = pos;
+            posq[invAtomOrder[index+numRealAtoms]] = pos;
 #endif
         }
+        index += blockDim.x*gridDim.x;
+    }
+}
+
+/**
+ * Reorder the inverse atom indexes
+ */
+
+extern "C" __global__ void reorderInverseAtomOrderIndexes(int numAtoms, int* __restrict__ atomIndex, int* __restrict__ invAtomOrder) {
+//    unsigned int index = threadIdx.x;
+    int index = blockIdx.x*blockDim.x+threadIdx.x;
+    while (index < numAtoms) {
+        invAtomOrder[atomIndex[index]] = index;
         index += blockDim.x*gridDim.x;
     }
 }

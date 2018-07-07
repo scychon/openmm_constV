@@ -45,7 +45,7 @@ namespace OpenMM {
  */
 class CudaIntegrateConstVLangevinStepKernel : public IntegrateConstVLangevinStepKernel {
 public:
-    CudaIntegrateConstVLangevinStepKernel(std::string name, const Platform& platform, CudaContext& cu) : IntegrateConstVLangevinStepKernel(name, platform), cu(cu), params(NULL) {
+    CudaIntegrateConstVLangevinStepKernel(std::string name, const Platform& platform, CudaContext& cu) : IntegrateConstVLangevinStepKernel(name, platform), cu(cu), params(NULL), invAtomOrder(NULL) {
     }
     ~CudaIntegrateConstVLangevinStepKernel();
     /**
@@ -73,7 +73,9 @@ private:
     CudaContext& cu;
     double prevTemp, prevFriction, prevStepSize;
     CudaArray* params;
-    CUfunction kernel1, kernel2, kernelImage;
+    CudaArray* invAtomOrder;
+//    CudaArray* idxqptcls;
+    CUfunction kernel1, kernel2, kernelImage, kernelReorder;
 };
 
 
