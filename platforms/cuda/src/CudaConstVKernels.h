@@ -79,6 +79,46 @@ private:
 };
 
 
+/**
+ * This kernel is invoked by ConstVDrudeLangevinIntegrator to take one time step
+ */
+class CudaIntegrateConstVDrudeLangevinStepKernel : public IntegrateConstVDrudeLangevinStepKernel {
+public:
+    CudaIntegrateConstVDrudeLangevinStepKernel(std::string name, const Platform& platform, CudaContext& cu) :
+            IntegrateConstVDrudeLangevinStepKernel(name, platform), cu(cu) {
+    }
+    /**
+     * Initialize the kernel.
+     *
+     * @param system     the System this kernel will be applied to
+     * @param integrator the ConstVDrudeLangevinIntegrator this kernel will be used for
+     * @param force      the DrudeForce to get particle parameters from
+     */
+    void initialize(const System& system, const ConstVDrudeLangevinIntegrator& integrator, const DrudeForce& force);
+    /**
+     * Execute the kernel.
+     *
+     * @param context        the context in which to execute this kernel
+     * @param integrator     the ConstVDrudeLangevinIntegrator this kernel is being used for
+     */
+    void execute(ContextImpl& context, const ConstVDrudeLangevinIntegrator& integrator);
+    /**
+     * Compute the kinetic energy.
+     * 
+     * @param context     the context in which to execute this kernel
+     * @param integrator  the ConstVDrudeLangevinIntegrator this kernel is being used for
+     */
+    double computeKineticEnergy(ContextImpl& context, const ConstVDrudeLangevinIntegrator& integrator);
+private:
+    CudaContext& cu;
+    double prevStepSize;
+    CudaArray normalParticles;
+    CudaArray pairParticles;
+    CudaArray invAtomOrder;
+    CUfunction kernel1, kernel2, hardwallKernel, kernelImage, kernelReorder;
+};
+
+
 } // namespace OpenMM
 
 #endif /*CUDA_CONSTV_KERNELS_H_*/

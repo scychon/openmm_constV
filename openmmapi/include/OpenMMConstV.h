@@ -35,5 +35,6 @@
 
 #include "openmm/Integrator.h"
 #include "openmm/ConstVLangevinIntegrator.h"
+#include "openmm/ConstVDrudeLangevinIntegrator.h"
 
 #endif /*OPENMM_CONSTV_H_*/

@@ -32,6 +32,8 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.                                     *
  * -------------------------------------------------------------------------- */
 
+#include "openmm/DrudeForce.h"
+#include "openmm/ConstVDrudeLangevinIntegrator.h"
 #include "openmm/ConstVLangevinIntegrator.h"
 #include "openmm/Platform.h"
 #include "openmm/System.h"
@@ -72,6 +74,37 @@ public:
      * @param integrator the ConstVLangevinIntegrator this kernel is being used for
      */
     virtual double computeKineticEnergy(ContextImpl& context, const ConstVLangevinIntegrator& integrator) = 0;
+};
+
+/**
+ * This kernel is invoked by ConstVDrudeLangevinIntegrator to take one time step.
+ */
+class IntegrateConstVDrudeLangevinStepKernel : public KernelImpl {
+public:
+    static std::string Name() {
+        return "IntegrateConstVDrudeLangevinStep";
+    }
+    IntegrateConstVDrudeLangevinStepKernel(std::string name, const Platform& platform) : KernelImpl(name, platform) {
+    }
+    /**
+     * Initialize the kernel.
+     *
+     * @param system     the System this kernel will be applied to
+     * @param integrator the ConstVDrudeLangevinIntegrator this kernel will be used for
+     * @param force      the DrudeForce to get particle parameters from
+     */
+    virtual void initialize(const System& system, const ConstVDrudeLangevinIntegrator& integrator, const DrudeForce& force) = 0;
+    /**
+     * Execute the kernel.
+     *
+     * @param context        the context in which to execute this kernel
+     * @param integrator     the ConstVDrudeLangevinIntegrator this kernel is being used for
+     */
+    virtual void execute(ContextImpl& context, const ConstVDrudeLangevinIntegrator& integrator) = 0;
+    /**
+     * Compute the kinetic energy.
+     */
+    virtual double computeKineticEnergy(ContextImpl& context, const ConstVDrudeLangevinIntegrator& integrator) = 0;
 };
 
 } // namespace OpenMM

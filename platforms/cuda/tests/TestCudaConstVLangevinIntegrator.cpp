@@ -36,6 +36,7 @@
 #include "openmm/Platform.h"
 #include "openmm/System.h"
 #include "openmm/ConstVLangevinIntegrator.h"
+#include "openmm/ConstVDrudeLangevinIntegrator.h"
 #include "SimTKOpenMMRealType.h"
 #include "sfmt/SFMT.h"
 #include <iostream>

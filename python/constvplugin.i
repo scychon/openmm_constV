@@ -40,6 +40,26 @@ import simtk.unit as unit
    val=unit.Quantity(val, 1/unit.picosecond)
 %}
 
+%pythonappend OpenMM::ConstVDrudeLangevinIntegrator::getTemperature() const %{
+   val=unit.Quantity(val, unit.kelvin)
+%}
+
+%pythonappend OpenMM::ConstVDrudeLangevinIntegrator::getFriction() const %{
+   val=unit.Quantity(val, 1/unit.picosecond)
+%}
+
+%pythonappend OpenMM::ConstVDrudeLangevinIntegrator::getDrudeTemperature() const %{
+   val=unit.Quantity(val, unit.kelvin)
+%}
+
+%pythonappend OpenMM::ConstVDrudeLangevinIntegrator::getDrudeFriction() const %{
+   val=unit.Quantity(val, 1/unit.picosecond)
+%}
+
+%pythonappend OpenMM::ConstVDrudeLangevinIntegrator::getMaxDrudeDistance() const %{
+   val=unit.Quantity(val, unit.nanometer)
+%}
+
 namespace OpenMM {
 
 class ConstVLangevinIntegrator : public Integrator {
@@ -52,6 +72,23 @@ public:
    void setFriction(double coeff) ;
    int getRandomNumberSeed() const ;
    void setRandomNumberSeed(int seed) ;
+   virtual void step(int steps) ;
+};
+
+class ConstVDrudeLangevinIntegrator : public Integrator {
+public:
+   ConstVDrudeLangevinIntegrator(double temperature, double friction, double drudeTemperature, double drudeFriction, double stepSize) ;
+
+   double getTemperature() const ;
+   void setTemperature(double temp) ;
+   double getFriction() const ;
+   void setFriction(double tau) ;
+   double getDrudeTemperature() const ;
+   void setDrudeTemperature(double temp) ;
+   double getDrudeFriction() const ;
+   void setDrudeFriction(double tau) ;
+   double getMaxDrudeDistance() const ;
+   void setMaxDrudeDistance(double distance) ;
    virtual void step(int steps) ;
 };
 

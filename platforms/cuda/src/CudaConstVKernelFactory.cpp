@@ -43,6 +43,7 @@ extern "C" OPENMM_EXPORT void registerKernelFactories() {
         Platform& platform = Platform::getPlatformByName("CUDA");
         CudaConstVKernelFactory* factory = new CudaConstVKernelFactory();
         platform.registerKernelFactory(IntegrateConstVLangevinStepKernel::Name(), factory);
+        platform.registerKernelFactory(IntegrateConstVDrudeLangevinStepKernel::Name(), factory);
     }
     catch (std::exception ex) {
         // Ignore
@@ -63,5 +64,7 @@ KernelImpl* CudaConstVKernelFactory::createKernelImpl(std::string name, const Pl
     CudaContext& cu = *static_cast<CudaPlatform::PlatformData*>(context.getPlatformData())->contexts[0];
     if (name == IntegrateConstVLangevinStepKernel::Name())
         return new CudaIntegrateConstVLangevinStepKernel(name, platform, cu);
+    if (name == IntegrateConstVDrudeLangevinStepKernel::Name())
+        return new CudaIntegrateConstVDrudeLangevinStepKernel(name, platform, cu);
     throw OpenMMException((std::string("Tried to create kernel with illegal kernel name '")+name+"'").c_str());
 }
