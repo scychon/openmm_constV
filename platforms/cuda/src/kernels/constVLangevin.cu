@@ -149,7 +149,7 @@ extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4*
             real4 pos = pos0;
 #endif
             pos.z = -pos.z;
-            pos.w = -pos.w;
+            pos.w = posq[invAtomOrder[index+numRealAtoms]].w;
 #ifdef USE_MIXED_PRECISION
             posq[invAtomOrder[index+numRealAtoms]] = make_real4((real) pos.x, (real) pos.y, (real) pos.z, (real) pos.w);
             posqCorrection[invAtomOrder[index+numRealAtoms]] = make_real4(pos.x-(real) pos.x, pos.y-(real) pos.y, pos.z-(real) pos.z, 0);
