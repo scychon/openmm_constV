@@ -1,0 +1,107 @@
+<ForceField>
+  <Info>
+    <DateGenerated>2020-01-26</DateGenerated>
+    <Source Source="toppar/toppar_water_ions.str" md5hash="f59e96950d55df9ca4f9b2d1486d7f4f" sourcePackage="charmm36" sourcePackageVersion="toppar_c36_aug15.tgz">toppar/toppar_water_ions.str</Source>
+    <Reference Reference="W.L. Jorgensen; J.Chandrasekhar; J.D. Madura; R.W. Impey; M.L. Klein; &quot;Comparison of simple potential functions for simulating liquid water&quot;, J. Chem. Phys. 79 926-935 (1983)." forcefield="tip3p">W.L. Jorgensen; J.Chandrasekhar; J.D. Madura; R.W. Impey; M.L. Klein; "Comparison of simple potential functions for simulating liquid water", J. Chem. Phys. 79 926-935 (1983).</Reference>
+    <Reference Reference="Beglov, D. and Roux, B., Finite Representation of an Infinite Bulk System: Solvent Boundary Potential for Computer Simulations, Journal of Chemical Physics, 1994, 100: 9050-9063" forcefield="ions">Beglov, D. and Roux, B., Finite Representation of an Infinite Bulk System: Solvent Boundary Potential for Computer Simulations, Journal of Chemical Physics, 1994, 100: 9050-9063</Reference>
+    <Reference Reference="['Stote, R.H. and Karplus, M. Zinc Binding in Proteins and Solution: A Simple but Accurate Nonbonded Representation, PROTEINS: Structure, Function, and Genetics 23:12-31 (1995)']" forcefield="ions" type="zinc">['Stote, R.H. and Karplus, M. Zinc Binding in Proteins and Solution: A Simple but Accurate Nonbonded Representation, PROTEINS: Structure, Function, and Genetics 23:12-31 (1995)']</Reference>
+    <Reference Reference="['Won, Y., &quot;Force Field for Monovalent, Divalent, and Trivalent Cations Developed under the Solvent Boundary Potential,&quot; Journal of Physical Chemistry A., 116: 11763-11767, 2012.']" forcefield="ions" type="cations">['Won, Y., "Force Field for Monovalent, Divalent, and Trivalent Cations Developed under the Solvent Boundary Potential," Journal of Physical Chemistry A., 116: 11763-11767, 2012.']</Reference>
+    <Reference Reference="Lee, S. H.; Rasaiah, J. C.; &quot;Molecular Dynamics Simulation of Ion Mobility. 2. Alkali Metal and Halide Ions Using the SPC/E Model for Water at 25oC  &quot; J. Phys. Chem., 100: 1420-1425, 1996." forcefield="ions" type="ions">Lee, S. H.; Rasaiah, J. C.; "Molecular Dynamics Simulation of Ion Mobility. 2. Alkali Metal and Halide Ions Using the SPC/E Model for Water at 25oC" J. Phys. Chem., 100: 1420-1425, 1996</Reference>
+    <Reference Reference="['Vincze, A.; Jedlovszky, P.; Horvai, G.; &quot;The L/L Interface and Adsorption of SCN^- Anions as Studied by Different Molecular Simulation Techniques,&quot; Analytical Sciences, 17: i317-i320, 2001.']" forcefield="ions" type="anions">['Vincze, A.; Jedlovszky, P.; Horvai, G.; "The L/L Interface and Adsorption of SCN^- Anions as Studied by Different Molecular Simulation Techniques," Analytical Sciences, 17: i317-i320, 2001.']</Reference>
+  </Info>
+  <AtomTypes>
+    <Type class="HW" element="H" mass="1.008" name="HW"/>
+    <Type class="OW" element="O" mass="15.9994" name="OW"/>
+    <Type class="LIT" element="Li" mass="6.941" name="LIT"/>
+    <Type class="SOD" element="Na" mass="22.98977" name="SOD"/>
+    <Type class="MG" element="Mg" mass="24.305" name="MG"/>
+    <Type class="POT" element="K" mass="39.0983" name="POT"/>
+    <Type class="CAL" element="Ca" mass="40.08" name="CAL"/>
+    <Type class="RUB" element="Rb" mass="85.4678" name="RUB"/>
+    <Type class="CES" element="Cs" mass="132.90545" name="CES"/>
+    <Type class="BAR" element="Ba" mass="137.327" name="BAR"/>
+    <Type class="ZN" element="Zn" mass="65.37" name="ZN"/>
+    <Type class="CAD" element="Cd" mass="112.411" name="CAD"/>
+    <Type name="F" class="F" element="F" mass="18.998400"/>
+    <Type class="CLA" element="Cl" mass="35.45" name="CLA"/>
+    <Type name="BR" class="BR" element="Br" mass="79.904100"/>
+    <Type name="grp-CG" class="CG" element="C" mass="0.0"/>
+    <Type name="I" class="I" element="I" mass="126.904470"/>
+    <Type name="STC" class="STC" element="S" mass="32.065"/>
+    <Type name="CTC" class="CTC" element="C" mass="12.011"/>
+    <Type name="NTC" class="NTC" element="N" mass="14.0067"/>
+  </AtomTypes>
+  <Residues>
+    <Residue name="SPCE">
+      <Atom charge="-0.8476" name="OH2" type="OW"/>
+      <Atom charge="0.4238" name="H1" type="HW"/>
+      <Atom charge="0.4238" name="H2" type="HW"/>
+      <Bond atomName1="OH2" atomName2="H1"/>
+      <Bond atomName1="OH2" atomName2="H2"/>
+    </Residue>
+    <Residue name="grp">
+      <Atom charge="0.0" name="CG" type="grp-CG"/>
+    </Residue>
+    <Residue name="SOD">
+      <Atom charge="1.0" name="SOD" type="SOD"/>
+    </Residue>
+    <Residue name="POT">
+      <Atom charge="1.0" name="POT" type="POT"/>
+    </Residue>
+    <Residue name="RUB">
+      <Atom charge="1.0" name="RUB" type="RUB"/>
+    </Residue>
+    <Residue name="CES">
+      <Atom charge="1.0" name="CES" type="CES"/>
+    </Residue>
+    <Residue name="F">
+      <Atom charge="-1.0" name="F" type="F"/>
+    </Residue>
+    <Residue name="CLA">
+      <Atom charge="-1.0" name="CLA" type="CLA"/>
+    </Residue>
+    <Residue name="BR">
+      <Atom charge="-1.0" name="BR" type="BR"/>
+    </Residue>
+    <Residue name="I">
+      <Atom charge="-1.0" name="I" type="I"/>
+    </Residue>
+    <Residue name="SCN">
+      <Atom charge="-0.56" name="S" type="STC"/>
+      <Atom charge="0.14" name="C" type="CTC"/>
+      <Atom charge="-0.58" name="N" type="NTC"/>
+      <Bond atomName1="S" atomName2="C"/>
+      <Bond atomName1="N" atomName2="C"/>
+    </Residue>
+  </Residues>
+  <HarmonicBondForce>
+    <Bond class1="OW" class2="HW" length="0.1" k="462750.4"/>
+    <Bond class1="STC" class2="CTC" length="0.115" k="462750.4"/>
+    <Bond class1="NTC" class2="CTC" length="0.1" k="462750.4"/>
+    <Bond class1="NTC" class2="STC" length="0.215" k="462750.4"/>
+  </HarmonicBondForce>
+  <HarmonicAngleForce>
+    <Angle class1="HW" class2="OW" class3="HW" angle="1.91061193216" k="836.8"/>
+    <Angle class1="STC" class2="CTC" class3="NTC" angle="3.141592653589793" k="836.8"/>
+  </HarmonicAngleForce>
+  <!--Urey-Bradley terms-->
+  <AmoebaUreyBradleyForce/>
+  <NonbondedForce coulomb14scale="1.0" lj14scale="1.0">
+    <UseAttributeFromResidue name="charge"/>
+    <Atom epsilon="0.0" sigma="1.0" type="HW"/>
+    <Atom epsilon="0.650" sigma="0.3166" type="OW"/>
+    <Atom epsilon="0.69" sigma="0.151" type="LIT"/>
+    <Atom epsilon="0.42" sigma="0.259" type="SOD"/>
+    <Atom epsilon="0.42" sigma="0.333" type="POT"/>
+    <Atom epsilon="0.42" sigma="0.353" type="RUB"/>
+    <Atom epsilon="0.42" sigma="0.389" type="CES"/>
+    <Atom epsilon="0.75" sigma="0.312" type="F"/>
+    <Atom epsilon="0.42" sigma="0.440" type="CLA"/>
+    <Atom epsilon="0.38" sigma="0.463" type="BR"/>
+    <Atom epsilon="0.42" sigma="0.517" type="I"/>
+    <Atom epsilon="1.5225" sigma="0.352" type="STC"/>
+    <Atom epsilon="0.425" sigma="0.335" type="CTC"/>
+    <Atom epsilon="0.310" sigma="0.331" type="NTC"/>
+    <Atom epsilon="0.22999448" sigma="0.337" type="grp-CG"/>
+  </NonbondedForce>
+</ForceField>
