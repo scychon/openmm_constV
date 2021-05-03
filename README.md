@@ -141,6 +141,17 @@ Current implementation generates dummy particles for neutral atoms as well, whic
             idxat2 = nbforce.addParticle(-q,imsig,imeps)
 
 
+Citing This Work
+======================
+Any work that uses this plugin should cite the following publication:
+
+Son, C. Y.; Wang, Z.-G.;
+"Image-charge effects on ion adsorption near aqueous interfaces",
+Proc. Natl. Acad. Sci. 2021, 118, xx, e2020615118
+
+You may also need to cite the original OpenMM publication.
+To find the right reference for OpenMM, please refer to [OpenMM user manual](http://docs.openmm.org/latest/userguide/introduction.html#referencing-openmm)
+
 License
 =======
 
