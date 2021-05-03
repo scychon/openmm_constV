@@ -15,6 +15,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 # We need to know where OpenMM is installed so we can access the headers and libraries.
 SET(OPENMM_DIR "/usr/local/openmm" CACHE PATH "Where OpenMM is installed")
 SET(OPENMM_INCLUDE_DIR "${OPENMM_DIR}/include/openmm/reference")
+SET(CMAKE_CXX_FLAGS "-std=c++11" CACHE STRING "" FORCE)
 INCLUDE_DIRECTORIES("${OPENMM_DIR}/include")
 #INCLUDE_DIRECTORIES("${OPENMM_DIR}/include" "${OPENMM_DIR}/include/openmm" "${OPENMM_DIR}/include/openmm/reference")
 LINK_DIRECTORIES("${OPENMM_DIR}/lib" "${OPENMM_DIR}/lib/plugins")

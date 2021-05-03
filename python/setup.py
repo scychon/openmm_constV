@@ -30,6 +30,7 @@ setup(name='constvplugin',
       py_modules=['constvplugin'],
       ext_modules=[extension],
       packages=["mdtools"],
+      package_dir={'': '.'},
       data_files= [],
       package_data={"mdtools" : []}
      )

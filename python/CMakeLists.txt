@@ -1,3 +1,31 @@
+#############################################
+### Copy all source files to staging area ###
+#############################################
+
+# Create package directory structure
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mdtools)
+
+file(GLOB STAGING_INPUT_FILES1 RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mdtools/*.py"
+)
+foreach(file ${STAGING_INPUT_FILES1})
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${file}" "${CMAKE_CURRENT_BINARY_DIR}/mdtools/${file}" COPYONLY)
+    set(STAGING_INPUT_FILES ${STAGING_INPUT_FILES} "${file}")
+endforeach(file ${STAGING_INPUT_FILES1})
+
+foreach(INIT_FILE ${STAGING_INPUT_FILES})
+    set(infile "${CMAKE_CURRENT_SOURCE_DIR}/${INIT_FILE}")
+    set(outfile "${CMAKE_CURRENT_BINARY_DIR}/${INIT_FILE}")
+    add_custom_command(
+        OUTPUT "${outfile}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${infile}" "${outfile}"
+        DEPENDS "${infile}"
+        COMMENT "CMake-copying file ${infile} to ${outfile}")
+    set(STAGING_OUTPUT_FILES ${STAGING_OUTPUT_FILES} "${outfile}")
+    # message("STAGING_OUTPUT_FILE = " ${outfile})
+endforeach(INIT_FILE ${STAGING_INPUT_FILES})
+
+
 set(WRAP_FILE ConstVPluginWrapper.cpp)
 set(MODULE_NAME constvplugin)
 

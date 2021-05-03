@@ -13,7 +13,7 @@ steps:
 
 1. Create a directory in which to build the plugin.
 
-2. Set environmental variables such as CXXFLAGS='std=c++11', OPENMM_CUDA_COMPILER=$(which nvcc)
+2. Set environmental variables such as CXXFLAGS='-std=c++11', OPENMM_CUDA_COMPILER=$(which nvcc)
 
 3. Run the CMake GUI or ccmake, specifying your new directory as the build directory and the top
 level directory of this project as the source directory.
@@ -42,35 +42,7 @@ as 'drudenoseplugin' package in your python
 Test Cases
 ==========
 
-To run all the test cases build the "test" target, for example by typing `make test`.
-
-This project contains several different directories for test cases: one for each platform, and
-another for serialization related code.  Each of these directories contains a CMakeLists.txt file
-that automatically creates a test from every file whose name starts with "Test" and ends with
-".cpp".  To create new tests, just add a new file to any of these directories.  The file should
-contain a `main()` function that executes any tests in the file and returns 0 if all tests were
-successful or 1 if any of them failed.
-
-Usually plugins are loaded dynamically at runtime, but that doesn't work well for test cases:
-you want to be able to run the tests before the plugin has yet been installed into the plugins
-directory.  Instead, the test cases directly link against the relevant plugin libraries.  But
-that creates another problem: when a plugin is dynamically loaded at runtime, its platforms and
-kernels are registered automatically, but that doesn't happen for code that statically links
-against it.  Therefore, the very first line of each `main()` function typically invokes a method
-to do the registration that _would_ have been done if the plugin were loaded automatically:
-
-    registerExampleOpenCLKernelFactories();
-
-The OpenCL and CUDA test directories create three tests from each source file: the program is
-invoked three times while passing the strings "single", "mixed", and "double" as a command line
-argument.  The `main()` function should take this value and set it as the default precision for
-the platform:
-
-    if (argc > 1)
-        Platform::getPlatformByName("OpenCL").setPropertyDefaultValue("OpenCLPrecision", string(argv[1]));
-
-This causes the plugin to be tested in all three of the supported precision modes every time you
-run the test suite.
+Due to the issues with dynamic loading of regular Drude Kernel vs. static loading of current kernel, `make test` is not supported currently. One could instead use example scripts and codes under `example` directory.
 
 
 OpenCL and CUDA Kernels

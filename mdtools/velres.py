@@ -35,6 +35,7 @@ You should have received a copy of the MIT License along with this program.
 
 import simtk.unit as unit
 import simtk.openmm as mm
+import numpy as np
 
 kB = unit.BOLTZMANN_CONSTANT_kB * unit.AVOGADRO_CONSTANT_NA
 
@@ -97,6 +98,10 @@ class CanonicalVelocityRescalingIntegrator(mm.CustomIntegrator):
         self.addPerDofVariable("x1", 0)  # for constraints
         self.addGlobalVariable("ndf", ndf)      # number of degrees of freedom
         self.addGlobalVariable("KE2", 0)      # number of degrees of freedom
+        self.addGlobalVariable("c1", np.exp(-timestep * collision_rate))      # constant for scaling factor
+        self.addGlobalVariable("c2", 1.0)    # constant for scaling factor
+        self.addGlobalVariable("r1", 0)      # first random number
+        self.addGlobalVariable("r2", 0)      # sum of random number squares (starting from second)
 
         #
         # Velocity Verlet step
@@ -116,8 +121,14 @@ class CanonicalVelocityRescalingIntegrator(mm.CustomIntegrator):
         if(ndf==0):
             self.addComputeSum("ndf", 1)
         if(useBerendsen):
-            self.addComputeGlobal("scale_v","sqrt(1+(kr-1)*p_collision);kr=ndf*kT/KE2")
+            self.addComputeGlobal("scale_v","sqrt(1.0+(kr-1.0)*p_collision);kr=ndf*kT/KE2")
         else:
-            self.addComputeGlobal("scale_v","sqrt(1+(kr-1)*p_collision +2*sqrt(kr*p_collision/ndf)*gaussian);kr=ndf*kT/KE2")
+            self.addComputeGlobal("c2","(1.0-c1)*kT/KE2")
+            self.addComputeGlobal("r1","gaussian")
+            self.addComputeSum("r2","gaussian*gaussian")
+            self.addComputeGlobal("scale_v","sqrt(c1 + c2*r2 + 2.0*r1*sqrt(c1*c2))")
+            #self.setGlobalVariableByName("r1", np.random.normal())
+            #self.setGlobalVariableByName("r2", np.random.chisquare(ndf-1))
+            #self.addComputeGlobal("scale_v","sqrt(c1 + c2*(r1*r1 + r2) + 2.0*r1*sqrt(c1*c2))")
         self.addComputePerDof("v", "v*scale_v")
 
