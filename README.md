@@ -118,8 +118,8 @@ Citing This Work
 Any work that uses this plugin should cite the following publication:
 
 Son, C. Y.; Wang, Z.-G.;
-"Image-charge effects on ion adsorption near aqueous interfaces",
-Proc. Natl. Acad. Sci. 2021, 118, xx, e2020615118
+"[Image-charge effects on ion adsorption near aqueous interfaces](https://www.pnas.org/content/118/19/e2020615118)",
+Proc. Natl. Acad. Sci. 2021, 118 (19), e2020615118
 
 You may also need to cite the original OpenMM publication.
 To find the right reference for OpenMM, please refer to [OpenMM user manual](http://docs.openmm.org/latest/userguide/introduction.html#referencing-openmm)
@@ -129,7 +129,7 @@ License
 
 This is a plugin designed to work with OpenMM molecular simulation toolkit
 
-Portions copyright (c) 2017 the Authors.
+Portions copyright (c) 2020 the Authors.
 
 Authors: Chang Yun Son
 
