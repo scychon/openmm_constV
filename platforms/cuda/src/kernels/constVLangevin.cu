@@ -135,7 +135,7 @@ extern "C" __global__ void selectConstVLangevinStepSize(int numAtoms, int padded
  * Modify the position of image charges
  */
 
-extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4* __restrict__ posq, real4* __restrict__ posqCorrection, int* __restrict__ invAtomOrder) {
+extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, int numCells, double zmax, real4* __restrict__ posq, real4* __restrict__ posqCorrection, int* __restrict__ invAtomOrder) {
 //    unsigned int index = threadIdx.x;
     int index = blockIdx.x*blockDim.x+threadIdx.x;
     while (index < numRealAtoms) {
@@ -148,14 +148,16 @@ extern "C" __global__ void updateImageParticlePositions(int numRealAtoms, real4*
 #else
             real4 pos = pos0;
 #endif
-            pos.z = -pos.z;
-            pos.w = posq[invAtomOrder[index+numRealAtoms]].w;
+            for (int i=1; i< numCells; i++) {
+                pos.z = -pos.z + zmax*(2*i);
+                pos.w = posq[invAtomOrder[index+numRealAtoms*i]].w;
 #ifdef USE_MIXED_PRECISION
-            posq[invAtomOrder[index+numRealAtoms]] = make_real4((real) pos.x, (real) pos.y, (real) pos.z, (real) pos.w);
-            posqCorrection[invAtomOrder[index+numRealAtoms]] = make_real4(pos.x-(real) pos.x, pos.y-(real) pos.y, pos.z-(real) pos.z, 0);
+                posq[invAtomOrder[index+numRealAtoms*i]] = make_real4((real) pos.x, (real) pos.y, (real) pos.z, (real) pos.w);
+                posqCorrection[invAtomOrder[index+numRealAtoms*i]] = make_real4(pos.x-(real) pos.x, pos.y-(real) pos.y, pos.z-(real) pos.z, 0);
 #else
-            posq[invAtomOrder[index+numRealAtoms]] = pos;
+                posq[invAtomOrder[index+numRealAtoms*i]] = pos;
 #endif
+            }
         }
         index += blockDim.x*gridDim.x;
     }

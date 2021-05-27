@@ -64,8 +64,12 @@ namespace OpenMM {
 
 class ConstVLangevinIntegrator : public Integrator {
 public:
-   ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize) ;
+   ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize, int numCells=2, double zmax=-1) ;
 
+   int getNumCells() const ;
+   void setNumCells(int cells) ;
+   double getCellSize() const ;
+   void setCellSize(double zmax) ;
    double getTemperature() const ;
    void setTemperature(double temp) ;
    double getFriction() const ;
@@ -77,8 +81,12 @@ public:
 
 class ConstVDrudeLangevinIntegrator : public Integrator {
 public:
-   ConstVDrudeLangevinIntegrator(double temperature, double friction, double drudeTemperature, double drudeFriction, double stepSize) ;
+   ConstVDrudeLangevinIntegrator(double temperature, double friction, double drudeTemperature, double drudeFriction, double stepSize, int numCells=2, double zmax=-1) ;
 
+   int getNumCells() const ;
+   void setNumCells(int cells) ;
+   double getCellSize() const ;
+   void setCellSize(double zmax) ;
    double getTemperature() const ;
    void setTemperature(double temp) ;
    double getFriction() const ;

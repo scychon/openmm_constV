@@ -41,13 +41,15 @@ using namespace OpenMM;
 using std::string;
 using std::vector;
 
-ConstVDrudeLangevinIntegrator::ConstVDrudeLangevinIntegrator(double temperature, double frictionCoeff, double drudeTemperature, double drudeFrictionCoeff, double stepSize) {
+ConstVDrudeLangevinIntegrator::ConstVDrudeLangevinIntegrator(double temperature, double frictionCoeff, double drudeTemperature, double drudeFrictionCoeff, double stepSize, int numCells, double zmax) {
     setTemperature(temperature);
     setFriction(frictionCoeff);
     setDrudeTemperature(drudeTemperature);
     setDrudeFriction(drudeFrictionCoeff);
     setMaxDrudeDistance(0);
     setStepSize(stepSize);
+    setNumCells(numCells);
+    setCellSize(zmax);
     setConstraintTolerance(1e-5);
     setRandomNumberSeed(0);
 }

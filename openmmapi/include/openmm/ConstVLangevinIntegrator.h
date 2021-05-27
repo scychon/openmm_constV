@@ -51,8 +51,42 @@ public:
      * @param temperature    the temperature of the heat bath (in Kelvin)
      * @param frictionCoeff  the friction coefficient which couples the system to the heat bath (in inverse picoseconds)
      * @param stepSize       the step size with which to integrate the system (in picoseconds)
+     * @param numCells       the number of cells including real and image cells (default = 2, indicating single real+image pair)
+     * @param zmax           the size of unit cell in z-dimension
      */
-    ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize);
+    ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize, int numCells = 2, double zmax=-1);
+    /**
+     * Get the number of real+image cells.
+     *
+     * @return the temperature of the heat bath, measured in Kelvin
+     */
+    int getNumCells() const {
+        return numCellCopies;
+    }
+    /**
+     * Set the tnumber of real+image cells.
+     *
+     * @param numCells    the number of real+image cells. (must be multiple of 2, value larger than 2 indicates multiple real+image pair)
+     */
+    void setNumCells(int cells) {
+        numCellCopies = cells;
+    }
+    /**
+     * Get the temperature of the heat bath (in Kelvin).
+     *
+     * @return the size of unit cell in z-dimension
+     */
+    double getCellSize() const {
+        return cellsize;
+    }
+    /**
+     * Set the temperature of the heat bath (in Kelvin).
+     *
+     * @param zmax    the size of unit cell in z-dimension
+     */
+    void setCellSize(double zmax) {
+        cellsize = zmax;
+    }
     /**
      * Get the temperature of the heat bath (in Kelvin).
      *
@@ -135,8 +169,9 @@ protected:
      */
     double computeKineticEnergy();
 private:
-    double temperature, friction;
+    double temperature, friction, cellsize;
     int randomNumberSeed;
+    int numCellCopies;
     Kernel kernel;
 };
 

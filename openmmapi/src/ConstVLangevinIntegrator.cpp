@@ -41,10 +41,12 @@ using namespace OpenMM;
 using std::string;
 using std::vector;
 
-ConstVLangevinIntegrator::ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize) {
+ConstVLangevinIntegrator::ConstVLangevinIntegrator(double temperature, double frictionCoeff, double stepSize, int numCells, double zmax) {
     setTemperature(temperature);
     setFriction(frictionCoeff);
     setStepSize(stepSize);
+    setNumCells(numCells);
+    setCellSize(zmax);
     setConstraintTolerance(1e-5);
     setRandomNumberSeed(0);
 }

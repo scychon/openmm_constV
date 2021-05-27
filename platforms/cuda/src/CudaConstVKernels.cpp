@@ -73,12 +73,26 @@ void CudaIntegrateConstVLangevinStepKernel::initialize(const System& system, con
 
 
     // Check image particles are properly set (same number as original, mass = 0)
+    int numCells = integrator.getNumCells();
+    if (numCells%2 != 0)
+        throw OpenMMException("Not even number of cells");
     int numAtoms = system.getNumParticles();
-    if (numAtoms%2 != 0)
-        throw OpenMMException("Not even number of particles");
-    for (int i = numAtoms/2; i < numAtoms; i++) {
+    if (numAtoms%numCells != 0)
+        throw OpenMMException("Number of particles is not multiple of number of cells");
+    for (int i = numAtoms/numCells; i < numAtoms; i++) {
         if (system.getParticleMass(i) != 0.0)
             throw OpenMMException("Image Particle has nonzero mass");
+    }
+
+    // Check for the unit cell z-dimension
+    Vec3 a, b, c;
+    system.getDefaultPeriodicBoxVectors(a, b, c);
+    zmax = integrator.getCellSize();
+    if (zmax < 0) {
+        zmax = c[2]/numCells;
+    }
+    else if (zmax*numCells != c[2]) {
+        throw OpenMMException("Unit cell dimension does not match with the provided zmax value");
     }
 
 //    // Initialize the positions of the image particles
@@ -89,7 +103,8 @@ void CudaIntegrateConstVLangevinStepKernel::execute(ContextImpl& context, const 
     cu.setAsCurrent();
     CudaIntegrationUtilities& integration = cu.getIntegrationUtilities();
     int numAtoms = cu.getNumAtoms();
-    int numRealAtoms = numAtoms/2;
+    int numCells = integrator.getNumCells();
+    int numRealAtoms = numAtoms/numCells;
     int paddedNumAtoms = cu.getPaddedNumAtoms();
     double temperature = integrator.getTemperature();
     double friction = integrator.getFriction();
@@ -147,7 +162,7 @@ void CudaIntegrateConstVLangevinStepKernel::execute(ContextImpl& context, const 
 
     // Call the image charge position update kernel.
 
-    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &invAtomOrder->getDevicePointer()};
+    void* argsImage[] = {&numRealAtoms, &numCells, &zmax, &cu.getPosq().getDevicePointer(), &posCorrection, &invAtomOrder->getDevicePointer()};
     cu.executeKernel(kernelImage, argsImage, numRealAtoms, 128);
 
     // Update the time and step count.
@@ -166,15 +181,29 @@ void CudaIntegrateConstVDrudeLangevinStepKernel::initialize(const System& system
     cu.getIntegrationUtilities().initRandomNumberGenerator((unsigned int) integrator.getRandomNumberSeed());
 
     // check for even number of atoms and zero mass for image charges    
+    int numCells = integrator.getNumCells();
+    if (numCells%2 != 0)
+        throw OpenMMException("Not even number of cells");
     int numAtoms = system.getNumParticles();
-    if (numAtoms%2 != 0)
-        throw OpenMMException("Not even number of particles");
-    for (int i = numAtoms/2; i < numAtoms; i++) {
+    if (numAtoms%numCells != 0)
+        throw OpenMMException("Number of particles is not multiple of number of cells");
+    for (int i = numAtoms/numCells; i < numAtoms; i++) {
         if (system.getParticleMass(i) != 0.0)
             throw OpenMMException("Image Particle has nonzero mass");
     }
-    int numRealAtoms = numAtoms/2;
+    int numRealAtoms = numAtoms/numCells;
     invAtomOrder.initialize<int>(cu, cu.getPaddedNumAtoms(), "invAtomOrder");
+
+    // Check for the unit cell z-dimension
+    Vec3 a, b, c;
+    system.getDefaultPeriodicBoxVectors(a, b, c);
+    zmax = integrator.getCellSize();
+    if (zmax < 0) {
+        zmax = c[2]/numCells;
+    }
+    else if (zmax*numCells != c[2]) {
+        throw OpenMMException("Unit cell dimension does not match with the provided zmax value");
+    }
 
     // Identify particle pairs and ordinary particles.
     
@@ -220,7 +249,8 @@ void CudaIntegrateConstVDrudeLangevinStepKernel::execute(ContextImpl& context, c
     cu.setAsCurrent();
     CudaIntegrationUtilities& integration = cu.getIntegrationUtilities();
     int numAtoms = cu.getNumAtoms();
-    int numRealAtoms = numAtoms/2;
+    int numCells = integrator.getNumCells();
+    int numRealAtoms = numAtoms/numCells;
     
     // Compute integrator coefficients.
     
@@ -312,7 +342,7 @@ void CudaIntegrateConstVDrudeLangevinStepKernel::execute(ContextImpl& context, c
 
     // Call the image charge position update kernel.
 
-    void* argsImage[] = {&numRealAtoms, &cu.getPosq().getDevicePointer(), &posCorrection, &invAtomOrder.getDevicePointer()};
+    void* argsImage[] = {&numRealAtoms, &numCells, &zmax, &cu.getPosq().getDevicePointer(), &posCorrection, &invAtomOrder.getDevicePointer()};
     cu.executeKernel(kernelImage, argsImage, numRealAtoms, 128);
 
     // Update the time and step count.

@@ -71,7 +71,7 @@ public:
     double computeKineticEnergy(ContextImpl& context, const ConstVLangevinIntegrator& integrator);
 private:
     CudaContext& cu;
-    double prevTemp, prevFriction, prevStepSize;
+    double prevTemp, prevFriction, prevStepSize, zmax;
     CudaArray* params;
     CudaArray* invAtomOrder;
 //    CudaArray* idxqptcls;
@@ -111,7 +111,7 @@ public:
     double computeKineticEnergy(ContextImpl& context, const ConstVDrudeLangevinIntegrator& integrator);
 private:
     CudaContext& cu;
-    double prevStepSize;
+    double prevStepSize, zmax;
     CudaArray normalParticles;
     CudaArray pairParticles;
     CudaArray invAtomOrder;
